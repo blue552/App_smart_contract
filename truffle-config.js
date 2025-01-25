@@ -8,9 +8,9 @@ module.exports = {
     }
   },
   contracts_directory: './contracts',
-  compilers:{
-    solc:{
-      version: "^0.8.0",
+  compilers: {
+    solc: {
+      version: "0.8.15",
       optimizer: {
         enabled: true,
         runs: 200
@@ -19,6 +19,9 @@ module.exports = {
   },
   db: {
     enabled: false
-  }
+  },
+  mocha: {
+    reporter: 'spec', // Giảm thông tin log trong quá trình chạy test
+  },
 
 };

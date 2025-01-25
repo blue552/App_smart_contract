@@ -78,14 +78,16 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
             transactionsData[0][i].toInt(),
             transactionsData[1][i],
             transactionsData[2][i],
-            DateTime.fromMicrosecondsSinceEpoch(transactionsData[3][i]));
-          trans.add(transactionModel);
+            DateTime.fromMicrosecondsSinceEpoch(
+                transactionsData[3][i].toInt()));
+        trans.add(transactionModel);
       }
       transactions = trans;
 
-      int bal = balanceData[0];
+      int bal = balanceData[0].toInt();
       balance = bal;
-      emit(DashboardSuccessState(transaction_model: transactions, balance: balance))
+      await Future.delayed(const Duration(seconds: 2));
+      emit(DashboardSuccessState(transactions: transactions, balance: balance));
     } catch (e) {
       log(e.toString());
       emit(DashboardErrorState());

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:smart_contract/features/bloc/dashboard_bloc.dart';
 import 'package:smart_contract/features/ui/dashboard_page.dart';
 import 'package:smart_contract/main.dart';
+import 'package:smart_contract/models/transaction_model.dart';
 // ignore: unused_import
 import 'package:smart_contract/utils/colors.dart';
 
 class DepositPage extends StatefulWidget {
-  const DepositPage({super.key});
+  final DashboardBloc dashboardBloc;
+  const DepositPage({super.key, required this.dashboardBloc});
 
   @override
   State<DepositPage> createState() => _DepositPageState();
@@ -46,22 +49,19 @@ class _DepositPageState extends State<DepositPage> {
               ),
             ),
             const SizedBox(height: 80),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                InkWellWidget(
-                    text: 'Deposit',
-                    icon: Iconsax.convert,
-                    onTap: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => DashBoardPage()),
-                        (route) => false,
-                      );
-                    }),
-              ],
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              InkWell(
+                onTap: () {
+                  widget.dashboardBloc.add(DashboardDepositEvent(
+                      transactionModel: TransactionModel(
+                          addressController.text,
+                          double.parse(amountController.text),
+                          reasonController.text,
+                          DateTime.now())));
+                },
+                child: Icon(Iconsax.convert),
+              ),
+            ]),
           ],
         ),
       ),

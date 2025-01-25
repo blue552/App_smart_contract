@@ -35,6 +35,7 @@ dependencies:
   web3dart: ^2.7.3
   http:
   web_socket_channel: ^2.4.4
+  flutter_svg: ^1.0.3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -73,3 +74,4 @@ flutter:
     - assets/bitcoin.png
     - assets/bitcoin2.png
     - build/contracts/
+    

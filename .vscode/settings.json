@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/MY PC/Documents/Moblie App/smart_contract/windows/flutter"
+    "cmake.sourceDirectory": "C:/Users/MY PC/Documents/Moblie App/smart_contract/windows/flutter",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }
