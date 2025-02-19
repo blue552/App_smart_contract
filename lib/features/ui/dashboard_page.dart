@@ -182,11 +182,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                   icon: Iconsax.export,
                                   onTap: () {
                                     Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => WithdrawPage(),
-                                      ),
-                                    );
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => WithdrawPage(
+                                            dashboardBloc: DashboardBloc(),
+                                          ),
+                                        ));
                                   },
                                 ),
                                 InkWellWidget(
@@ -330,87 +331,91 @@ class _DashBoardPageState extends State<DashBoardPage> {
                             ),
                             Container(
                                 height: 200,
-                                child: Expanded(
-                                  child: LineChart(LineChartData(
-                                    lineTouchData: const LineTouchData(
-                                        handleBuiltInTouches: false),
-                                    gridData: const FlGridData(show: false),
-                                    borderData: FlBorderData(show: false),
-                                    lineBarsData: [
-                                      LineChartBarData(
-                                        isCurved: true,
-                                        barWidth: 2,
-                                        isStrokeCapRound: true,
-                                        dotData: const FlDotData(show: false),
-                                        spots: const [
-                                          FlSpot(0, 1),
-                                          FlSpot(1, 1.2),
-                                          FlSpot(3, 1.4),
-                                          FlSpot(4, 3.4),
-                                          FlSpot(5, 2),
-                                        ],
-                                        belowBarData: BarAreaData(
-                                          show: true,
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              secondColor.withAlpha(
-                                                  (0.6 * 255).toInt()),
-                                              secondColor.withAlpha(
-                                                  (0.0 * 255).toInt()),
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: LineChart(LineChartData(
+                                        lineTouchData: const LineTouchData(
+                                            handleBuiltInTouches: false),
+                                        gridData: const FlGridData(show: false),
+                                        borderData: FlBorderData(show: false),
+                                        lineBarsData: [
+                                          LineChartBarData(
+                                            isCurved: true,
+                                            barWidth: 2,
+                                            isStrokeCapRound: true,
+                                            dotData: const FlDotData(show: false),
+                                            spots: const [
+                                              FlSpot(0, 1),
+                                              FlSpot(1, 1.2),
+                                              FlSpot(3, 1.4),
+                                              FlSpot(4, 3.4),
+                                              FlSpot(5, 2),
                                             ],
-                                            stops: const [0.5, 1.0],
-                                            begin: const Alignment(0, 0),
-                                            end: const Alignment(0, 1),
+                                            belowBarData: BarAreaData(
+                                              show: true,
+                                              gradient: LinearGradient(
+                                                colors: [
+                                                  secondColor.withAlpha(
+                                                      (0.6 * 255).toInt()),
+                                                  secondColor.withAlpha(
+                                                      (0.0 * 255).toInt()),
+                                                ],
+                                                stops: const [0.5, 1.0],
+                                                begin: const Alignment(0, 0),
+                                                end: const Alignment(0, 1),
+                                              ),
+                                            ),
+                                            color: primaryColor,
+                                          )
+                                        ],
+                                        titlesData: FlTitlesData(
+                                          leftTitles: const AxisTitles(
+                                            sideTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
+                                          ),
+                                          rightTitles: const AxisTitles(
+                                            sideTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
+                                          ),
+                                          topTitles: const AxisTitles(
+                                            sideTitles: SideTitles(
+                                              showTitles: false,
+                                            ),
+                                          ),
+                                          bottomTitles: AxisTitles(
+                                            sideTitles: SideTitles(
+                                                showTitles: true,
+                                                interval: 1,
+                                                getTitlesWidget: (value, meta) {
+                                                  switch (value.toInt()) {
+                                                    case 0:
+                                                      return const Text('Oct');
+                                                    case 1:
+                                                      return const Text('Nov');
+                                                    case 2:
+                                                      return const Text('Dec');
+                                                    case 3:
+                                                      return const Text('Jan');
+                                                    case 4:
+                                                      return const Text('Feb');
+                                                    case 5:
+                                                      return const Text('Mar');
+                                                    default:
+                                                      return const Text('');
+                                                  }
+                                                }),
                                           ),
                                         ),
-                                        color: primaryColor,
-                                      )
-                                    ],
-                                    titlesData: FlTitlesData(
-                                      leftTitles: const AxisTitles(
-                                        sideTitles: SideTitles(
-                                          showTitles: false,
-                                        ),
-                                      ),
-                                      rightTitles: const AxisTitles(
-                                        sideTitles: SideTitles(
-                                          showTitles: false,
-                                        ),
-                                      ),
-                                      topTitles: const AxisTitles(
-                                        sideTitles: SideTitles(
-                                          showTitles: false,
-                                        ),
-                                      ),
-                                      bottomTitles: AxisTitles(
-                                        sideTitles: SideTitles(
-                                            showTitles: true,
-                                            interval: 1,
-                                            getTitlesWidget: (value, meta) {
-                                              switch (value.toInt()) {
-                                                case 0:
-                                                  return const Text('Oct');
-                                                case 1:
-                                                  return const Text('Nov');
-                                                case 2:
-                                                  return const Text('Dec');
-                                                case 3:
-                                                  return const Text('Jan');
-                                                case 4:
-                                                  return const Text('Feb');
-                                                case 5:
-                                                  return const Text('Mar');
-                                                default:
-                                                  return const Text('');
-                                              }
-                                            }),
-                                      ),
+                                        minX: 0,
+                                        maxX: 5,
+                                        minY: 0,
+                                        maxY: 4,
+                                      )),
                                     ),
-                                    minX: 0,
-                                    maxX: 5,
-                                    minY: 0,
-                                    maxY: 4,
-                                  )),
+                                  ],
                                 )),
                             const SizedBox(height: 40),
                             Row(

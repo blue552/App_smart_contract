@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:smart_contract/features/bloc/dashboard_bloc.dart';
 import 'package:smart_contract/features/ui/dashboard_page.dart';
 import 'package:smart_contract/main.dart';
+import 'package:smart_contract/models/transaction_model.dart';
 
 class WithdrawPage extends StatefulWidget {
-  const WithdrawPage({super.key});
+  const WithdrawPage({super.key, required this.dashboardBloc});
+  final DashboardBloc dashboardBloc;
 
   @override
   State<WithdrawPage> createState() => _WithdrawPageState();
@@ -25,12 +28,12 @@ class _WithdrawPageState extends State<WithdrawPage> {
               const SizedBox(height: 80),
               Text("Desposit", style: TextStyle(fontSize: 30)),
               const SizedBox(height: 20),
-              TextField(
-                controller: addressController,
-                decoration: InputDecoration(
-                  hintText: "Enter the Address",
-                ),
-              ),
+              // TextField(
+              //   controller: addressController,
+              //   decoration: InputDecoration(
+              //     hintText: "Enter the Address",
+              //   ),
+              // ),
               TextField(
                 controller: amountController,
                 decoration: InputDecoration(
@@ -47,17 +50,17 @@ class _WithdrawPageState extends State<WithdrawPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  InkWellWidget(
-                      text: 'Withdraw',
-                      icon: Iconsax.export,
-                      onTap: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DashBoardPage()),
-                          (route) => false,
-                        );
-                      })
+                  InkWell(
+                onTap: () {
+                  widget.dashboardBloc.add(DashboardWithdrawEvent(
+                      transactionModel: TransactionModel(
+                          addressController.text,
+                          double.parse(amountController.text),
+                          reasonController.text,
+                          DateTime.now())));
+                },
+                child: Icon(Iconsax.convert),
+              ),
                 ],
               ),
             ],

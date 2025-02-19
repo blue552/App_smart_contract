@@ -19,6 +19,26 @@ class _DepositPageState extends State<DepositPage> {
   final TextEditingController addressController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController reasonController = TextEditingController();
+  bool isLoading = false;
+
+   late FocusNode _firstFocusNode;
+  late FocusNode _secondFocusNode;
+
+  
+  @override
+  void initState() {
+    super.initState();
+    _firstFocusNode = FocusNode();
+    _secondFocusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _firstFocusNode.dispose();
+    _secondFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,19 +50,26 @@ class _DepositPageState extends State<DepositPage> {
             const SizedBox(height: 80),
             Text("Desposit", style: TextStyle(fontSize: 30)),
             const SizedBox(height: 20),
+            // TextField(
+            //   controller: addressController,
+            //   focusNode: _focusNode,
+            //   decoration: InputDecoration(
+            //     hintText: "Enter the Address",
+            //   ),
+            // ),
             TextField(
-              controller: addressController,
-              decoration: InputDecoration(
-                hintText: "Enter the Address",
-              ),
-            ),
-            TextField(
+             focusNode: _firstFocusNode,
               controller: amountController,
               decoration: InputDecoration(
                 hintText: "Enter the Amount",
               ),
+               onSubmitted: (value) {
+                // Chuyển focus sang TextField thứ hai
+                _secondFocusNode.requestFocus();
+              },
             ),
             TextField(
+              focusNode: _secondFocusNode,
               controller: reasonController,
               decoration: InputDecoration(
                 hintText: "Enter the Reason",
@@ -50,17 +77,35 @@ class _DepositPageState extends State<DepositPage> {
             ),
             const SizedBox(height: 80),
             Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              InkWell(
-                onTap: () {
-                  widget.dashboardBloc.add(DashboardDepositEvent(
-                      transactionModel: TransactionModel(
-                          addressController.text,
-                          double.parse(amountController.text),
-                          reasonController.text,
-                          DateTime.now())));
-                },
-                child: Icon(Iconsax.convert),
-              ),
+              isLoading
+                  ? CircularProgressIndicator() // Hiển thị chỉ báo đang tải trong khi xử lý
+                  : InkWell(
+                      onTap: () {
+                        double? amount = double.tryParse(amountController.text);
+                        if (amount == null) {
+                          // Xử lý số tiền không hợp lệ
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Số tiền không hợp lệ")),
+                          );
+                          return;
+                        }
+
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        // Gửi sự kiện deposit
+                        widget.dashboardBloc.add(DashboardDepositEvent(
+                          transactionModel: TransactionModel(
+                            addressController.text,
+                            amount,
+                            reasonController.text,
+                            DateTime.now(),
+                          ),
+                        ));
+                      },
+                      child: Icon(Iconsax.convert),
+                    ),
             ]),
           ],
         ),

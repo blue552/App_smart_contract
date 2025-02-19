@@ -46,12 +46,17 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       _web3Client = Web3Client(rpcUrl, http.Client(), socketConnector: () {
         return IOWebSocketChannel.connect(socketUrl).cast<String>();
       }); //Wen3Client
+
+      log('Connecting to Ethereum node at $rpcUrl');
+
       //get ABI
       String abiFile = await rootBundle
           .loadString("build/contracts/ExpenseManagerContract.json");
+          log('ABI file loaded successfully');
       var jsonDecoded = jsonDecode(abiFile);
       _abiCode = ContractAbi.fromJson(
           jsonEncode(jsonDecoded['abi']), 'ExpenseManagerContract');
+          log('ABI code initialized successfully');
       _contractAddress =
           EthereumAddress.fromHex("0xF63d34fe02c439d49DD2A6D76f315441659A5542");
 
@@ -89,6 +94,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       await Future.delayed(const Duration(seconds: 2));
       emit(DashboardSuccessState(transactions: transactions, balance: balance));
     } catch (e) {
+      log('Error: $e');
       log(e.toString());
       emit(DashboardErrorState());
     }
@@ -96,21 +102,30 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
   FutureOr<void> dashboardDepositEvent(
       DashboardDepositEvent event, Emitter<DashboardState> emit) async {
-    final data = await _web3Client!.call(
-        contract: _deployedContract,
-        function: _deposit,
-        params: [event.transactionModel.amount, event.transactionModel.reason]);
-    log(data.toString());
-    // Implement the deposit event logic here
+    try {
+      // Đảm bảo rằng _deployedContract được khởi tạo đúng
+      _deployedContract = DeployedContract(_abiCode, _contractAddress);
+
+      // Tạo transaction cho chức năng deposit
+      final transaction = Transaction.callContract(
+          contract: _deployedContract,
+          function: _deposit,
+          parameters: [
+            BigInt.from(event.transactionModel.amount),
+            event.transactionModel.reason
+          ],
+          value: EtherAmount.inWei(BigInt.from(
+              event.transactionModel.amount))); // Giá trị gửi vào hợp đồng
+
+      // Gửi transaction
+      final result = await _web3Client!.sendTransaction(_creds, transaction,
+          chainId: null, fetchChainIdFromNetworkId: true);
+      log(result.toString());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   FutureOr<void> dashboardWithdrawEvent(
-      DashboardWithdrawEvent event, Emitter<DashboardState> emit) async {
-    final data = await _web3Client!.call(
-        contract: _deployedContract,
-        function: _withdraw,
-        params: [event.transactionModel.amount, event.transactionModel.reason]);
-    log(data.toString());
-    // Implement the deposit event logic here
-  }
+      DashboardWithdrawEvent event, Emitter<DashboardState> emit) async {}
 }
